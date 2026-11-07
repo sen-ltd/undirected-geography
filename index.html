@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Undirected Geography: matchings and nimbers</title>
+    <meta
+      name="description"
+      content="Undirected Vertex Geography in the browser. Who wins is decided by maximum matchings (Fraenkel–Scheinerman–Ullman 1993), and the overlay shows the matching. Each move's Grundy value comes from exact search, a quantity Burke, Ferland and Teng (2021) proved PSPACE-complete in general. Their constructions are recomputed, including a high-nimber algorithm that works only as drawn, not as printed."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141518'/%3E%3Cline x1='8' y1='22' x2='16' y2='9' stroke='%239aa6ff' stroke-width='3'/%3E%3Cline x1='16' y1='9' x2='24' y2='22' stroke='%23d9b45a' stroke-width='3'/%3E%3Ccircle cx='8' cy='22' r='4' fill='%231a1b1f' stroke='%233c3f46'/%3E%3Ccircle cx='16' cy='9' r='5' fill='%239aa6ff'/%3E%3Ccircle cx='24' cy='22' r='4' fill='%232a2d33' stroke='%238d919a'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Undirected Geography <span>who wins is a matching, the nimber is PSPACE-hard</span></h1>
+        <p class="sub">
+          A token sits on a vertex. Players take turns sliding it to a <strong>neighbouring</strong> vertex, and the
+          vertex it leaves is <em>deleted</em>, so the token traces a path that can never come back. Whoever cannot
+          move loses. The player to move wins exactly when the token's vertex lies in <strong>every maximum
+          matching</strong>. Matchings settle who wins in polynomial time; the overlay shows one. The
+          <strong>Grundy value</strong> (what the position is worth inside a sum of games) is a different matter: it
+          is PSPACE-complete in general. Every legal move is marked with its exact value, a
+          <strong class="win-t">0</strong> means a winning move.
+        </p>
+      </header>
+
+      <div id="wrap">
+        <div class="stage">
+          <div class="controls">
+            <label class="sel">board <select id="boardSel"></select></label>
+            <label class="sel">you play
+              <select id="youSel">
+                <option value="first">first</option>
+                <option value="second">second</option>
+                <option value="both">both sides</option>
+              </select>
+            </label>
+            <label class="sel chk"><input type="checkbox" id="hints" checked /> values</label>
+            <label class="sel chk"><input type="checkbox" id="matchChk" checked /> matching</label>
+            <button id="pick">Move start</button>
+            <button id="undo">Undo</button>
+            <button id="restart">Restart</button>
+          </div>
+          <div id="boardwrap"><svg id="board" role="img" aria-label="Undirected Geography board"></svg></div>
+          <div class="legend">
+            <span><i style="background:#9aa6ff"></i>token and its trail</span>
+            <span><i style="background:#d9b45a;opacity:.6"></i>a maximum matching of what is left</span>
+            <span><i style="background:#ef6b7b"></i>ring: vertex missed by this matching</span>
+          </div>
+          <div id="status" aria-live="polite"></div>
+        </div>
+        <div class="side">
+          <h3>the position</h3>
+          <div class="panel" id="value"></div>
+          <h3>moves</h3>
+          <div class="panel" id="moves"></div>
+        </div>
+      </div>
+
+      <section class="notes">
+        <h2>Two answers, two costs</h2>
+        <p>
+          <em>Who wins</em> (Fraenkel, Scheinerman and Ullman, 1993): delete the token's vertex. If the maximum matching
+          gets smaller, the vertex was in every maximum matching and the player to move wins by moving along a
+          matching edge. If it stays the same, every move lands on a vertex the opponent can match. This takes two runs
+          of Edmonds' blossom algorithm.
+        </p>
+        <p>
+          <em>What it is worth</em>: the Grundy value decides sums such as two boards played side by side. Burke,
+          Ferland and Teng (FOCS 2021) proved it PSPACE-complete, even on planar bipartite graphs of degree 4, and
+          polynomial on degree 3, where their branch-and-bound needs only winnability tests. The panel shows both
+          numbers when the board has degree at most 3.
+        </p>
+        <h2>Checked against the literature</h2>
+        <p>
+          The repository recomputes the paper's constructions, read from its arXiv TeX source. The edge gadget and the
+          lemmas behind it hold on every digraph with up to 3 vertices. The branch-and-bound matches exact search. The
+          high-nimber construction of Section 5 gives *n at N<sub>n</sub> for n = 4…9 when built as the figures draw
+          it. Built from Algorithm 1 exactly as printed, it gives 0, *, *2, * …, because the printed algorithm leaves
+          out three things the figures and lemmas rely on. An exhaustive pass over every connected graph up to 9
+          vertices confirms the matching theorem on all 2,445,437 starting positions and finds the fewest vertices that
+          a value *k needs: 1, 2, 4, 6, 8, 10 for k = 0…5. A tree needs 2<sup>k</sup>.
+        </p>
+      </section>
+
+      <footer>
+        <p>
+          Built by <a href="https://sen.ltd/">SEN LLC</a>. TypeScript, no runtime
+          dependencies. <a href="https://github.com/sen-ltd/undirected-geography">Source</a>.
+        </p>
+      </footer>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
