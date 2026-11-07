@@ -117,3 +117,10 @@ A tree needs 2^k vertices (its root needs subtrees worth 0, …, k−1).
 ## License
 
 MIT
+
+<!-- sen-publish:links -->
+## Links
+
+- 🌐 Demo: https://sen.ltd/portfolio/undirected-geography/
+- 📝 記事: https://qiita.com/sen-ltd/items/74e1db9c2a6113cbba0c
+<!-- /sen-publish:links -->
